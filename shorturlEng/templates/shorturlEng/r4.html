@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>URL Shrtnr</title>
+    <!-- Not present in the tutorial. Just for basic styling. -->
+
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/JSXTransformer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+  </head>
+  <body>
+
+ <div id="content"></div>
+
+    <script type="text/jsx;harmony=true" >
+
+var URLMessage = React.createClass({
+  render: function() {
+  return (
+      <div className="URLMessage">
+        <h3>{this.props.data}</h3>
+      </div>
+    );
+  }
+});
+
+var URLBox = React.createClass({
+
+  handleCommentSubmit: function(url2shorten) {
+
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: url2shorten,
+      success: function(data) {
+
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: ['Enter URL then press submit']};
+  },
+
+
+  render: function() {
+    return (
+      <div className="uRLBox">
+
+        <URLMessage data={this.state.data} />
+
+        <URLForm onCommentSubmit={this.handleCommentSubmit} />
+
+      </div>
+    );
+  }
+});
+
+
+var URLForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+
+    var text = React.findDOMNode(this.refs.text).value.trim();
+    if (!text) {
+      return;
+    }
+    this.props.onCommentSubmit({url: text});
+
+    React.findDOMNode(this.refs.text).value = '';
+  },
+  render: function() {
+    return (
+
+
+         <form className="uRLForm" onSubmit={this.handleSubmit}>
+        <input type="text" name="url" id="url" size ="35" placeholder="Enter URL Here" ref="text"/>
+        <input type="submit" value="Submit" />
+        </form>
+        );
+  }
+});
+
+React.render(
+  <URLBox url="makeshort/"  />,
+  document.getElementById('content')
+);
+
+
+    </script>
+  </body>
+</html>
